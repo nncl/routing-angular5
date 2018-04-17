@@ -115,8 +115,10 @@ class HomeComponent {
 <nav class="navbar navbar-light bg-faded">
   <a class="navbar-brand" [routerLink]="['home']">iTunes Search App</a>
   <ul class="nav navbar-nav">
-    <li class="nav-item active" [routerLinkActive]="['active']">
-      <a class="nav-link" [routerLink]="['home']">Home</a>
+    <li class="nav-item" [routerLinkActive]="['active']" #rla="routerLinkActive">
+      <a class="nav-link" [routerLink]="['home']">
+        Home {{ rla.isActive ? '(already open)' : ''}}
+      </a>
     </li>
     <li class="nav-item" [routerLinkActive]="['active']">
       <a class="nav-link" [routerLink]="['search']">Search</a>
