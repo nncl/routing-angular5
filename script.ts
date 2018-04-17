@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { JsonpModule, Jsonp, Response } from '@angular/http';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
@@ -113,19 +113,31 @@ class HomeComponent {
     selector: 'app-header',
     template: `
 <nav class="navbar navbar-light bg-faded">
-  <a class="navbar-brand" href="#">iTunes Search App</a>
+  <a class="navbar-brand" [routerLink]="['home']">iTunes Search App</a>
   <ul class="nav navbar-nav">
-    <li class="nav-item active">
-      <a class="nav-link" href="#">Home</a>
+    <li class="nav-item active" [routerLinkActive]="['active']">
+      <a class="nav-link" [routerLink]="['home']">Home</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Search</a>
+    <li class="nav-item" [routerLinkActive]="['active']">
+      <a class="nav-link" [routerLink]="['search']">Search</a>
     </li>
   </ul>
 </nav>
  `
 })
 class HeaderComponent {
+    constructor(private route: Router) {
+    }
+
+    /*
+    goHome() {
+        this.route.navigate(['']);
+    }
+
+    goSearch() {
+        this.route.navigate(['search']);
+    }
+    */
 }
 
 @Component({
