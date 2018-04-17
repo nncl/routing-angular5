@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {JsonpModule, Jsonp, Response} from '@angular/http';
 import {ReactiveFormsModule, FormControl, FormsModule} from '@angular/forms';
-import {Routes, RouterModule} from "@angular/router";
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
@@ -140,22 +139,12 @@ class HeaderComponent {
 class AppComponent {
 }
 
-const routes: Routes = [
-  {path: '', redirectTo: 'home', pathMatch: 'full'},
-  {path: 'find', redirectTo: 'search'},
-  {path: 'home', component: HomeComponent},
-  {path: 'search', component: SearchComponent},
-  {path: '**', component: HomeComponent}
-];
-
-
 @NgModule({
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
-    JsonpModule,
-    RouterModule.forRoot(routes, {useHash: true})
+    JsonpModule
   ],
   declarations: [
     AppComponent,
