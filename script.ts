@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { JsonpModule, Jsonp, Response } from '@angular/http';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
-import { Routes, RouterModule, Router } from '@angular/router';
+import { Routes, RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
@@ -64,7 +64,7 @@ class SearchService {
   </div>
   <button type="button"
           class="btn btn-primary"
-          (click)="doSearch(search.value)">
+          (click)="onSearch(search.value)">
     Search
   </button>
 </form>
@@ -89,7 +89,19 @@ class SearchService {
 class SearchComponent {
     private loading: boolean = false;
 
-    constructor(private itunes: SearchService) {
+    constructor(private itunes: SearchService,
+                private route: ActivatedRoute,
+                private router: Router) {
+        this.route.params.subscribe(params => {
+            if (params['term']) {
+                this.doSearch(params['term']);
+            }
+        });
+    }
+
+    onSearch(term: string) {
+        // Term here is optional
+        this.router.navigate(['search', {term: term}]);
     }
 
     doSearch(term: string) {
