@@ -52,6 +52,42 @@ class SearchService {
     }
 }
 
+@Component({
+    selector: 'app-artist',
+    template: `
+<h1>Artist</h1>
+<p>
+    <a [routerLink]="['./tracks']">Tracks</a>
+    <a [routerLink]="['./albums']">Albums</a>
+</p>
+<router-outlet></router-outlet>
+`
+})
+class ArtistComponent {
+
+}
+
+@Component({
+    selector: 'app-artist-track-list',
+    template: `
+<h1>Artist Track Listing</h1>    
+`
+})
+class ArtistTrackListComponent {
+    constructor(private route: ActivatedRoute) {
+        this.route.parent.params.subscribe(params => console.log(params));
+    }
+}
+
+@Component({
+    selector: 'app-artist-album-list',
+    template: `
+<h1>Artist Album Listing</h1>    
+`
+})
+class ArtistAlbumListComponent {
+
+}
 
 @Component({
     selector: 'app-search',
@@ -77,7 +113,7 @@ class SearchService {
 </div>
 
 <div class="list-group">
-  <a href="#"
+  <a [routerLink]="['/artist', track.artistId]"
      class="list-group-item list-group-item-action"
      *ngFor="let track of itunes.results">
     <img src="{{track.thumbnail}}">
@@ -171,6 +207,15 @@ const appRoutes: Routes = [
     , {path: 'find', redirectTo: 'search'}
     , {path: 'home', component: HomeComponent}
     , {path: 'search', component: SearchComponent}
+    , {
+        path: 'artist/:artistId',
+        component: ArtistComponent,
+        children: [
+            {path: '', redirectTo: 'tracks', pathMatch: 'full'},
+            {path: 'tracks', component: ArtistTrackListComponent},
+            {path: 'albums', component: ArtistAlbumListComponent}
+        ]
+    }
     , {path: '**', component: HomeComponent} // like a 404 page
 ];
 
@@ -186,7 +231,10 @@ const appRoutes: Routes = [
         AppComponent,
         SearchComponent,
         HomeComponent,
-        HeaderComponent
+        HeaderComponent,
+        ArtistComponent,
+        ArtistTrackListComponent,
+        ArtistAlbumListComponent
     ],
     bootstrap: [AppComponent],
     providers: [SearchService]
