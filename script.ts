@@ -25,10 +25,10 @@ class SearchService {
         this.results = [];
     }
 
-    search(term: string) {
+    search(term: string, entity: string = '') {
         return new Promise((resolve, reject) => {
             this.results = [];
-            let apiURL = `${this.apiRoot}?term=${term}&media=music&limit=20&callback=JSONP_CALLBACK`;
+            let apiURL = `${this.apiRoot}?term=${term}&media=music&entity=${entity}&limit=20&callback=JSONP_CALLBACK`;
             this.jsonp.request(apiURL)
                 .toPromise()
                 .then(
@@ -57,8 +57,8 @@ class SearchService {
     template: `
 <h1>Artist</h1>
 <p>
-    <a [routerLink]="['./tracks']">Tracks</a>
-    <a [routerLink]="['./albums']">Albums</a>
+    <button class="btn btn-primary" [routerLink]="['./tracks']" [routerLinkActive]="['active']">Tracks</button>
+    <button class="btn btn-primary" [routerLink]="['./albums']" [routerLinkActive]="['active']">Albums</button>
 </p>
 <router-outlet></router-outlet>
 `
@@ -82,12 +82,32 @@ class ArtistTrackListComponent {
 @Component({
     selector: 'app-artist-album-list',
     template: `
-<h1>Artist Album Listing</h1>    
+<h1>Artist Album Listing</h1>
+
+<p *ngIf="loading">Loading..</p>
+
+<pre>{{itunes.results | json}}</pre>
+
+<!--<div class="list-group">-->
+  <!--<a [routerLink]="['/artist', track.artistId]"-->
+     <!--class="list-group-item list-group-item-action"-->
+     <!--*ngFor="let track of itunes.results">-->
+    <!--<img src="{{track.thumbnail}}">-->
+    <!--{{ track.name }} <span class="text-muted">by</span> {{ track.artist }}-->
+  <!--</a>-->
+<!--</div>-->
 `
 })
 class ArtistAlbumListComponent {
-    constructor(public route: ActivatedRoute) {
-        this.route.parent.params.subscribe(params => console.log(params));
+    loading: boolean = false;
+
+    constructor(public route: ActivatedRoute,
+                public itunes: SearchService) {
+        this.loading = true;
+        this.route.parent.params.subscribe(params => {
+            // song
+            this.itunes.search(params.artistId, 'album').then(_ => this.loading = false)
+        });
     }
 }
 
