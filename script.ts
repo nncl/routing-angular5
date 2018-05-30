@@ -93,16 +93,16 @@ class ArtistAlbumListComponent {
 
 @Component({
     selector: 'app-search',
-    template: `<form class="form-inline">
+    template: `<form class="form-inline"
+          (submit)="onSearch(search.value)">
   <div class="form-group">
     <input type="search"
            class="form-control"
            placeholder="Enter search string"
            #search>
   </div>
-  <button type="button"
-          class="btn btn-primary"
-          (click)="onSearch(search.value)">
+  <button type="submit"
+          class="btn btn-primary">
     Search
   </button>
 </form>
