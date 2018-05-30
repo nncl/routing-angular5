@@ -86,7 +86,9 @@ class ArtistTrackListComponent {
 `
 })
 class ArtistAlbumListComponent {
-
+    constructor(public route: ActivatedRoute) {
+        this.route.parent.params.subscribe(params => console.log(params));
+    }
 }
 
 @Component({
