@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { JsonpModule, Jsonp, Response } from '@angular/http';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
-import { Routes, RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { Routes, RouterModule, Router, ActivatedRoute, CanActivate } from '@angular/router';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
@@ -13,6 +13,12 @@ class SearchItem {
                 public link: string,
                 public thumbnail: string,
                 public artistId: string) {
+    }
+}
+
+class UserService {
+    isLoggedIn(): boolean {
+        return false;
     }
 }
 
@@ -224,6 +230,31 @@ class HeaderComponent {
 class AppComponent {
 }
 
+// Guards
+class AlwaysAuthGuard implements CanActivate {
+    canActivate() {
+        console.log("AlwaysAuthGuard");
+        return true;
+    }
+}
+
+@Injectable()
+class OnlyLoggedInUsersGuard implements CanActivate {
+
+    constructor(private user: UserService) {
+    }
+
+    canActivate() {
+        if (this.user.isLoggedIn()) {
+            return true;
+        } else {
+            alert("You dont have permission to view this page");
+            return false;
+        }
+    }
+}
+
+// Routes
 const appRoutes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'}
     , {path: 'find', redirectTo: 'search'}
@@ -231,6 +262,7 @@ const appRoutes: Routes = [
     , {path: 'search', component: SearchComponent}
     , {
         path: 'artist/:artistId',
+        canActivate: [OnlyLoggedInUsersGuard, AlwaysAuthGuard],
         component: ArtistComponent,
         children: [
             {path: '', redirectTo: 'tracks', pathMatch: 'full'},
@@ -259,7 +291,12 @@ const appRoutes: Routes = [
         ArtistAlbumListComponent
     ],
     bootstrap: [AppComponent],
-    providers: [SearchService]
+    providers: [
+        SearchService,
+        AlwaysAuthGuard,
+        OnlyLoggedInUsersGuard,
+        UserService
+    ]
 })
 class AppModule {
 }
