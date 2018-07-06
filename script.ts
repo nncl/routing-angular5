@@ -3,7 +3,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { JsonpModule, Jsonp, Response } from '@angular/http';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
-import { Routes, RouterModule, Router, ActivatedRoute, CanActivate, CanActivateChild } from '@angular/router';
+import {
+    Routes,
+    RouterModule,
+    Router,
+    ActivatedRoute,
+    CanActivate,
+    CanActivateChild,
+    CanDeactivate,
+    ActivatedRouteSnapshot,
+    RouterStateSnapshot
+} from '@angular/router';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
@@ -173,6 +183,10 @@ class SearchComponent {
         this.loading = true;
         this.itunes.search(term).then(_ => this.loading = false)
     }
+
+    canDeactivate() {
+        return this.itunes.results.length > 0;
+    }
 }
 
 @Component({
@@ -263,12 +277,23 @@ class OnlyLoggedInUsersGuard implements CanActivate {
     }
 }
 
+class UnsearchedTermGuard implements CanDeactivate<SearchComponent> {
+    canDeactivate(component: SearchComponent,
+                  route: ActivatedRouteSnapshot,
+                  state: RouterStateSnapshot): boolean {
+        console.log("UnsearchedTermGuard");
+        console.log(route.params);
+        console.log(state.url);
+        return component.canDeactivate() || window.confirm("Are you sure?");
+    }
+}
+
 // Routes
 const appRoutes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'}
     , {path: 'find', redirectTo: 'search'}
     , {path: 'home', component: HomeComponent}
-    , {path: 'search', component: SearchComponent}
+    , {path: 'search', component: SearchComponent, canDeactivate: [UnsearchedTermGuard]}
     , {
         path: 'artist/:artistId',
         // canActivate: [OnlyLoggedInUsersGuard, AlwaysAuthGuard],
@@ -306,6 +331,7 @@ const appRoutes: Routes = [
         AlwaysAuthGuard,
         OnlyLoggedInUsersGuard,
         AlwaysAuthChildGuard,
+        UnsearchedTermGuard,
         UserService
     ]
 })
