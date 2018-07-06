@@ -249,6 +249,7 @@ class OnlyLoggedInUsersGuard implements CanActivate {
             return true;
         } else {
             alert("You dont have permission to view this page");
+            // Navigate user to login page with Router
             return false;
         }
     }
