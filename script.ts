@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { JsonpModule, Jsonp, Response } from '@angular/http';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
-import { Routes, RouterModule, Router, ActivatedRoute, CanActivate } from '@angular/router';
+import { Routes, RouterModule, Router, ActivatedRoute, CanActivate, CanActivateChild } from '@angular/router';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
@@ -18,7 +18,8 @@ class SearchItem {
 
 class UserService {
     isLoggedIn(): boolean {
-        return false;
+        // Here you should just check if there's something on localstorage, i.e.
+        return true;
     }
 }
 
@@ -238,6 +239,13 @@ class AlwaysAuthGuard implements CanActivate {
     }
 }
 
+class AlwaysAuthChildGuard implements CanActivateChild {
+    canActivateChild() {
+        console.log("AlwaysAuthChildGuard");
+        return true;
+    }
+}
+
 @Injectable()
 class OnlyLoggedInUsersGuard implements CanActivate {
 
@@ -263,7 +271,8 @@ const appRoutes: Routes = [
     , {path: 'search', component: SearchComponent}
     , {
         path: 'artist/:artistId',
-        canActivate: [OnlyLoggedInUsersGuard, AlwaysAuthGuard],
+        // canActivate: [OnlyLoggedInUsersGuard, AlwaysAuthGuard],
+        canActivateChild: [AlwaysAuthChildGuard],
         component: ArtistComponent,
         children: [
             {path: '', redirectTo: 'tracks', pathMatch: 'full'},
@@ -296,6 +305,7 @@ const appRoutes: Routes = [
         SearchService,
         AlwaysAuthGuard,
         OnlyLoggedInUsersGuard,
+        AlwaysAuthChildGuard,
         UserService
     ]
 })
